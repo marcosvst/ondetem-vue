@@ -1,0 +1,14 @@
+{
+  "companyName": "Mercadinho do seu Zé",
+  "companyAddress": "Rua Amélia Pereira, 1198, Bairro da Cruz",
+  "products": [
+    {
+      "productName": "Molho de tomate Elefante",
+      "productPrice": "5.49"
+    },
+    {
+      "productName": "Molho de tomate Dona Moça",
+      "productPrice": "4.50"
+    }
+  ]
+}
