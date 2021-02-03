@@ -9,8 +9,8 @@ git commit -m "fist commit"
 
 
 git remote add origin https://github.com/marcosvst/ondetem-vue.git
-git branch -M master
 
+git push origin master
 
 git checkout -b gh-pages
 
