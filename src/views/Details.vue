@@ -1,5 +1,5 @@
 <template>
-  <div class="home bg-primary">
+  <div class="home bg-primary" v-for="company in results" :key="company.id">
     <header class="row">
       <div id="header-menu" class="col-12 px-4 pt-3 text-start">
         <router-link to="/">
@@ -9,11 +9,11 @@
       <div id="header-title" class="col text-white text-start p-4">
         <div>
           <h1>
-            Mercadinho do seu Zé
+            {{ company.trading_name }}
           </h1>
           <p class="fw-light">
             <i class="bi bi-geo-alt"></i>
-            Rua Amélia Pereira, 1198, Bairro da Cruz
+            {{ company.city }} - {{ company.uf }}
           </p>
         </div>
       </div>
@@ -23,22 +23,22 @@
         <div class="col-12">
           <p class="text-start">Produtos nessa loja que coincidem com sua busca por <strong>{{ productName }}</strong>:</p>
           <br />
-          <div class="row" v-for="item in results" :key="item.productName">
+          <div class="row" v-for="product in company.products" :key="product.id">
             <div class="col-12 p-2 text-start">
-              <h5>{{ item.productName }}</h5>
+              <h5>{{ product.name }}</h5>
               <p class="fw-light">
-                {{ item?.productDescription ?? "Sem descrição" }}
+                {{ product?.description ?? "Sem descrição" }}
               </p>
               <br />
               <div class="d-flex justify-content-between text-align-center mb-3">
                 <span class="fw-bold">
-                  R$ {{ item.productPrice.toFixed(2).toString().replace('.', ',') }}
+                  R$ {{ parseFloat(product.price).toFixed(2).toString().replace('.', ',') }}
                 </span>
-                <a :href="
+                <a v-if="company.phoneNumber" :href="
                   'https://api.whatsapp.com/send?phone='
-                  + companyPhoneNumber + 
+                  + company.phoneNumber + 
                   '&text=Olá!%20Vocês%20ainda%20tem%20o%20produto%20*' 
-                  + item.productName + 
+                  + product.name + 
                   '*%20disponível?%20&#128512;'"
                 >
                   <i class="bi bi-whatsapp"></i>
@@ -84,38 +84,31 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import api from '../services/ondetem-api.js'
 
 export default {
   name: 'Home',
   components: {
     // HelloWorld
   },
-  setup() {
-  },
   data() {
     return {
-      storeName: this.$route.params.store,
       productName: this.$route.query.product,
-      productCategory: this.$route.query.category,
-      companyPhoneNumber: "5512997299100",
-      results: [
-      {
-        "productName": "Molho de tomate Elefante",
-        "productDescription": "É um ótimo molho de tomate pq é top demais",
-        "productPrice": 5.49
-      },
-      {
-        "productName": "Molho de tomate Dona Moça",
-        "productPrice": 4.50
-      }
-      ]
+      searchInput: null,
+      results: {}
     }
   },
-  beforeMount() {
-
+  async mounted() {
+    const response = await api.get("products/company", {
+          params: {
+            "city": "Lorena",
+            "uf": "SP",
+            "productName": this.$route.query.product,
+            "companyId": this.$route.params.store,
+          }
+        })
+    
+    this.results = response.data.companiesAndProducts
   },
-  mounted() {
-    // console.log(this.productName)
-  }
 }
 </script>

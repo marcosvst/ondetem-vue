@@ -1,9 +1,14 @@
 <template>
-  <div id="nav">
-    <!-- <router-link to="/">Home</router-link> | -->
-    <!-- <router-link to="/about">About</router-link> -->
+  <div class="row">
+    <div class="col-md-2 adsense-left"></div>
+    <div class="col-12 col-md-8">
+      <router-view />
+      <div class="row">
+        <div class="col-12 fixed-bottom bg-dark">sdfsd</div>
+      </div>
+    </div>
+    <div class="col-md-2 adsense-right"></div>
   </div>
-  <router-view/>
 </template>
 
 <style>
@@ -18,6 +23,5 @@ html, * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
 }
 </style>

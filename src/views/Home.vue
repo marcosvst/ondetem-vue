@@ -1,23 +1,30 @@
 <template>
-  <div class="home bg-primary">
+  <div class="bg-primary">
     <header class="row">
-      <div id="header-menu" class="col-12 px-4 pt-3 text-start">
+      <!-- <div id="header-menu" class="col-12 px-4 pt-3 text-start">
         <i class="bi bi-grid-3x3-gap-fill text-white" style="font-size: 2rem"></i>
-      </div>
+      </div> -->
       <div id="header-title" class="col text-white text-start p-4">
-        <h1>Encontre produtos perto de você</h1>
+        <h1>Encontre produtos perto de você </h1>
       </div>
       <div id="search-area" class="col-12 px-4">
+        <div class="col-12 mb-2">
+          <select class="form-select p-2" v-model="city" @change="searchProduct(searchInput)">
+            <option disabled value="">Selecione a cidade</option>
+            <option value="Lorena">Lorena</option>
+            <option value="Guaratingueta">Guaratinguetá</option>
+            <option value="Aparecida">Aparecida</option>
+          </select>
+        </div>
         <div class="input-group mb-3">
           <div class="input-group">
             <i class="bi bi-search input-group-text text-primary bg-white p-2" style="font-size: 1.2rem"></i>
-            <input type="text" v-model="product" v-on:input="searchProduct(product)" class="form-control p-2" placeholder=" Digite o nome do produto">
+            <input type="text" v-on:input="debounceInput" class="form-control p-2" placeholder=" Digite o nome do produto">
           </div>
         </div>
       </div>
-      <div id="horizontal-scroll-menu" class="col-12 mb-2">
+      <!-- <div id="horizontal-scroll-menu" class="col-12 mb-2">
         <div class="scrolling-wrapper row flex-row flex-nowrap p-2">
-          <!-- Category cards -->
           <div class="col-3 ms-2 text-white text-center">
             <div class="card card-block text-primary">
               <i class="bi bi-building" style="font-size: 1.5rem"></i>
@@ -49,28 +56,31 @@
             <span class="small">Ferramentas</span>
           </div>
         </div>
-      </div>
+      </div> -->
     </header>
-    <main id="results-area" class="col-12 bg-white p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px">
+    <main id="results-area" class="row bg-white p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px">
       <div id="vertical-scroll-results">
         <div class="col-12">
-          <p class="text-start">Lojas que possuem produtos que conicidem com sua busca por <strong>{{ product }}</strong>:</p>
+          <p v-if="results && results.length > 0" class="text-start">Lojas que possuem produtos que coincidem com sua busca por <strong>{{ searchInput }}</strong>:</p>
+          <img v-if="results && results.length <= 0 || showSearchText == false" src="../assets/kingdom-waiting.png" alt="Search placeholder" class="img-fluid mx-auto d-block mt-4">
           <br />
-          <div class="row" v-for="item in results" :key="item.companyName">
+          <div class="row" v-for="item in results" :key="item.id">
             <div class="col-12 p-2 text-start">
-              <h5>{{ item.companyName }}</h5>
+              <h5>{{ item.trading_name }}</h5>
               <p class="fw-light">
                 <i class="bi bi-geo-alt"></i>
-                {{ item.companyAddress }}
+                {{ item.city }} - {{ item.uf }}
               </p>
               <br />
               <div class="d-flex justify-content-between mb-3">
                 <span class="fw-bold" style="display: hidden">
-                  R$ {{ Math.min.apply(Math, item.products.map(function(o) { return o.productPrice; })).toFixed(2).toString().replace('.', ',') }}
-                  -
-                  R$ {{ Math.max.apply(Math, item.products.map(function(o) { return o.productPrice; })).toFixed(2).toString().replace('.', ',') }}
+                  R$ {{ Math.min.apply(Math, item.products.map(function(o) { return o.price; })).toFixed(2).toString().replace('.', ',') }}
+                  <span v-if="item.products.length > 1"> 
+                    -
+                    R$ {{ Math.max.apply(Math, item.products.map(function(o) { return o.price; })).toFixed(2).toString().replace('.', ',') }}
+                  </span>
                 </span>
-                <router-link :to="{ name: 'Details', params: { store: item.companySlug }, query: { product: product, category: category }}">
+                <router-link :to="{ name: 'Details', params: { store: item.id }, query: { product: searchInput, category: category }}">
                   <i class="bi bi-box-arrow-up-right"></i>
                 </router-link>
               </div>
@@ -114,6 +124,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import api from '../services/ondetem-api.js'
 
 export default {
   name: 'Home',
@@ -122,46 +133,52 @@ export default {
   },
   data() {
     return {
-      product: 'tomate',
+      searchInput: null,
+      debounce: null,
+      showSearchText: false,
       category: 'mercado',
-      results: [
-        {
-          "companyName": "Mercadinho do seu Zé",
-          "companyAddress": "Rua Amélia Pereira, 1198, Bairro da Cruz",
-          "companySlug": "mercadinho-do-seu-ze",
-          "products": [
-            {
-              "productName": "Molho de tomate Elefante",
-              "productPrice": "5.49"
-            },
-            {
-              "productName": "Molho de tomate Dona Moça",
-              "productPrice": "4.50"
-            }
-          ]
-        },
-        {
-          "companyName": "Mercadinho da dona Neuza",
-          "companyAddress": "Rua Santa Catarina, 1013, Vila Hepacaré",
-          "companySlug": "mercadinho-da-dona-neuza",
-          "products": [
-            {
-              "productName": "Molho de tomate Elefante",
-              "productPrice": 10
-            },
-            {
-              "productName": "Molho de tomate Dona Moça",
-              "productPrice": 40.50
-            }
-          ]
-        },
-      ]
+      results: null,
+      city: '',
+      location: null
     }
   },
   methods: {
-    searchProduct(string) {
-      console.log(string)
+    debounceInput(event) {
+      this.searchInput = null
+      this.showSearchText = true
+
+      clearTimeout(this.debounce)
+
+      this.debounce = setTimeout(() => {
+        this.searchInput = event.target.value
+
+        this.searchProduct(this.searchInput)
+      }, 600)
+    },
+    async searchProduct(searchString) {
+      let response = []
+      
+      try {
+        response = await api.get("products", {
+          params: {
+            "city": this.city,
+            "uf": "SP",
+            "productName": searchString
+          }
+        })
+
+        this.results = response.data.companiesAndProducts
+      } catch(err) {
+        console.log("Search product failed because " + err)
+      }
     }
   }
+  // created() {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition( (position) => {
+  //       this.location = position.coords.latitude, position.coords.longitude
+  //     });
+  //   }
+  // }
 }
 </script>
