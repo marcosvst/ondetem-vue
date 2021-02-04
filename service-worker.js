@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/ondetem-vue/precache-manifest.b1b529cbab883936aa253aac1d78e747.js"
+  "/ondetem-vue/precache-manifest.785c92d272e1d5d8c60997bbf369b9a5.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "ondetem-vue"});
