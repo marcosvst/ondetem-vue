@@ -142,7 +142,7 @@ export default {
   },
   data() {
     return {
-      searchInput: null,
+      searchInput: '',
       debounce: null,
       showSearchText: false,
       category: 'mercado',

@@ -1,5 +1,5 @@
 <template>
-  <div class="home bg-primary" v-for="company in results" :key="company.id">
+  <div class="home bg-dark" v-for="company in results" :key="company.id">
     <header class="row">
       <div id="header-menu" class="col-12 px-4 pt-3 text-start">
         <router-link to="/">
@@ -103,7 +103,7 @@ export default {
     }
   },
   async mounted() {
-    loading = true
+    this.loading = true
     const response = await api.get("products/company", {
           params: {
             "city": "Lorena",
@@ -114,7 +114,7 @@ export default {
         })
     
     this.results = response.data.companiesAndProducts
-    loading = false
+    this.loading = false
   },
 }
 </script>
