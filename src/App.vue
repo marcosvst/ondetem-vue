@@ -18,10 +18,15 @@ html, * {
   box-sizing: border-box !important;
 }
 
+body {
+  background-color: #fefaee;
+}
+
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  background-color: #fefaee;
 }
 </style>

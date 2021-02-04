@@ -18,7 +18,7 @@
         </div>
       </div>
     </header>
-    <main id="results-area" class="col-12 bg-white p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px">
+    <main id="results-area" class="col-12 p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fefaee">
       <div id="vertical-scroll-results">
         <div class="col-12">
           <p class="text-start">Produtos nessa loja que coincidem com sua busca por <strong>{{ productName }}</strong>:</p>

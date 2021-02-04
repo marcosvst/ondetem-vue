@@ -1,11 +1,17 @@
 <template>
-  <div class="bg-primary">
+  <div class="bg-dark">
     <header class="row">
       <!-- <div id="header-menu" class="col-12 px-4 pt-3 text-start">
         <i class="bi bi-grid-3x3-gap-fill text-white" style="font-size: 2rem"></i>
       </div> -->
       <div id="header-title" class="col text-white text-start p-4">
         <h1>Encontre produtos perto de você </h1>
+        
+        <router-link to="/register" class="text-white" style="text-decoration: none">
+          Ou cadastre sua loja
+          &nbsp;
+          <i class="bi bi-arrow-right"></i>
+        </router-link>
       </div>
       <div id="search-area" class="col-12 px-4">
         <div class="col-12 mb-2">
@@ -18,7 +24,7 @@
         </div>
         <div class="input-group mb-3">
           <div class="input-group">
-            <i class="bi bi-search input-group-text text-primary bg-white p-2" style="font-size: 1.2rem"></i>
+            <i class="bi bi-search input-group-text text-dark bg-white p-2" style="font-size: 1.2rem"></i>
             <input type="text" v-on:input="debounceInput" class="form-control p-2" placeholder=" Digite o nome do produto">
           </div>
         </div>
@@ -58,11 +64,11 @@
         </div>
       </div> -->
     </header>
-    <main id="results-area" class="row bg-white p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px">
+    <main id="results-area" class="row p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fefaee">
       <div id="vertical-scroll-results">
         <div class="col-12">
           <p v-if="results && results.length > 0" class="text-start">Lojas que possuem produtos que coincidem com sua busca por <strong>{{ searchInput }}</strong>:</p>
-          <img v-if="results && results.length <= 0 || showSearchText == false" src="../assets/kingdom-waiting.png" alt="Search placeholder" class="img-fluid mx-auto d-block mt-4">
+          <img v-if="results && results.length <= 0 || showSearchText == false" src="../assets/fox.jpg" style="opacity: 0.4" alt="Search placeholder" class="img-fluid mx-auto d-block mt-4">
           <br />
           <div class="row" v-for="item in results" :key="item.id">
             <div class="col-12 p-2 text-start">
