@@ -19,6 +19,9 @@
       </div>
     </header>
     <main id="results-area" class="col-12 p-4" style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fefaee">
+      <div class="spinner-border text-center" v-if="loading" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
       <div id="vertical-scroll-results">
         <div class="col-12">
           <p class="text-start">Produtos nessa loja que coincidem com sua busca por <strong>{{ productName }}</strong>:</p>
@@ -95,10 +98,12 @@ export default {
     return {
       productName: this.$route.query.product,
       searchInput: null,
-      results: {}
+      results: {},
+      loading: false
     }
   },
   async mounted() {
+    loading = true
     const response = await api.get("products/company", {
           params: {
             "city": "Lorena",
@@ -109,6 +114,7 @@ export default {
         })
     
     this.results = response.data.companiesAndProducts
+    loading = false
   },
 }
 </script>

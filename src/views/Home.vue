@@ -68,7 +68,10 @@
       <div id="vertical-scroll-results">
         <div class="col-12">
           <p v-if="results && results.length > 0" class="text-start">Lojas que possuem produtos que coincidem com sua busca por <strong>{{ searchInput }}</strong>:</p>
-          <img v-if="results && results.length <= 0 || showSearchText == false" src="../assets/fox.jpg" style="opacity: 0.4" alt="Search placeholder" class="img-fluid mx-auto d-block mt-4">
+          <img v-if="!loading && results && results.length <= 0 || showSearchText == false" src="../assets/fox.jpg" style="opacity: 0.4" alt="Search placeholder" class="img-fluid mx-auto d-block mt-4">
+          <div class="spinner-border text-center" v-if="loading" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
           <br />
           <div class="row" v-for="item in results" :key="item.id">
             <div class="col-12 p-2 text-start">
@@ -145,7 +148,8 @@ export default {
       category: 'mercado',
       results: null,
       city: '',
-      location: null
+      location: null,
+      loading: false
     }
   },
   methods: {
@@ -165,15 +169,22 @@ export default {
       let response = []
       
       try {
-        response = await api.get("products", {
-          params: {
-            "city": this.city,
-            "uf": "SP",
-            "productName": searchString
-          }
-        })
+        this.loading = true
 
-        this.results = response.data.companiesAndProducts
+        if (this.searchInput != '') {
+          response = await api.get("products", {
+            params: {
+              "city": this.city,
+              "uf": "SP",
+              "productName": searchString
+            }
+          })
+
+          this.results = response.data.companiesAndProducts
+          this.loading = false
+        }
+
+        this.loading = false
       } catch(err) {
         console.log("Search product failed because " + err)
       }
